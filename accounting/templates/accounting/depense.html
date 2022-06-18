@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% load static%}
+{% block content %}
+{% load crispy_forms_tags %}
+
+<div class="container">
+    <div class="row shadow p-3 mb-5 bg-white rounded">
+        <h4>Nouvelle depense</h4>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="item form-group">
+                <div class="col-md-3 col-sm-3 ">
+                    {{ depense_form.libelle_depense | as_crispy_field}}
+                </div>
+                <div class="col-md-4 col-sm-4 ">
+                    {{ depense_form.description_depense | as_crispy_field}}
+                </div>
+                <div class="col-md-2 col-sm-2 ">
+                    {{ depense_form.prix_ht_depense | as_crispy_field}}
+                </div>
+                <div class="col-md-1 col-sm-1 ">
+                    {{ depense_form.quantite_depense | as_crispy_field}}
+                </div>
+                <div class="col-md-2 col-sm-2 ">
+                    {{ depense_form.total_depense | as_crispy_field}}
+                </div>
+
+            </div>
+            <div class="col-md-1 col-sm-1 mt-4">
+                <button type="submit" class="btn" style="background-color:#2a3f54; color:white;">Ajouter</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link " id="nav-all-tab" data-toggle="tab" href="#nav-all" role="tab"
+           aria-controls="nav-all" aria-selected="true">Tous</a>
+        <a class="nav-item nav-link active" id="nav-today-tab" data-toggle="tab" href="#nav-today" role="tab"
+           aria-controls="nav-today" aria-selected="false">Aujourd'hui</a>
+        <a class="nav-item nav-link" id="nav-month-tab" data-toggle="tab" href="#nav-month" role="tab"
+           aria-controls="nav-month" aria-selected="false">Ce mois</a>
+        <a class="nav-item nav-link" id="nav-recherche-tab" data-toggle="tab" href="#nav-recherche" role="tab"
+           aria-controls="nav-recherche" aria-selected="false">Recherche</a>
+    </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade " id="nav-all" role="tabpanel" aria-labelledby="nav-all-tab">
+        <table id="datatable-buttons" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+            <tr>
+                <th>Libelle</th>
+                <th>Description</th>
+                <th>Prix</th>
+                <th>Quantite</th>
+                <th>Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for v in depense %}
+            <tr>
+                <td>{{v.libelle_depense}}</td>
+                <td>{{v.description_depense}}</td>
+                <td>{{v.prix_ht_depense}}</td>
+                <td>{{v.quantite_depense}}</td>
+                <td>{{v.total_depense}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="tab-pane fade show active" id="nav-today" role="tabpanel" aria-labelledby="nav-today-tab">
+        <table id="datatable-buttons" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+            <tr>
+                <th>Libelle</th>
+                <th>Description</th>
+                <th>Prix <i class="fa fa-money"></i></th>
+                <th>Quantite</th>
+                <th>Total <i class="fa fa-money"></i></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for v in dp_today %}
+            <tr>
+
+                <td>{{v.libelle_depense}}</td>
+                <td>{{v.description_depense}}</td>
+                <td>{{v.prix_ht_depense}} GNF</td>
+                <td>{{v.quantite_depense}}</td>
+                <td>{{v.total_depense}} GNF</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td style="font-size:20px; "><strong>TOTAL</strong></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td style="font-size:15px; ">
+                    {% if sum_today == None %}
+                        0
+                    {% else %}
+                    {{sum_today}} GNF
+                    {% endif %}
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+    <div class="tab-pane fade" id="nav-month" role="tabpanel" aria-labelledby="nav-month-tab">
+        <table id="datatable-buttons" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+            <tr>
+                <th>Libelle</th>
+                <th>Description</th>
+                <th>Prix</th>
+                <th>Quantite</th>
+                <th>Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for v in dp_month %}
+            <tr>
+                <td>{{v.libelle_depense}}</td>
+                <td>{{v.description_depense}}</td>
+                <td>{{v.prix_ht_depense}}</td>
+                <td>{{v.quantite_depense}}</td>
+                <td>{{v.total_depense}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+
+    </div>
+    <div class="tab-pane fade" id="nav-recherche" role="tabpanel" aria-labelledby="nav-recherche-tab">
+
+
+        <div class="row">
+            <div class="col-md-3">
+                <form action="" method="post">
+                    <input type="date" name="date" value="2020-03-31"
+                           class="form-control dateinput form-control"
+                           placeholder="Select a date" required="" id="id_date">
+                    <button type="submit">Rechercher</button>
+                </form>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+</div>
+<script src="{% static 'vendors/bootstrap-daterangepicker/daterangepicker.js' %}"></script>
+<script>
+      const quantite_depense = document.getElementById("id_quantite_depense")
+    document.getElementById("id_quantite_depense").value = 1
+    quantite_depense.addEventListener("keyup", function(){
+        document.getElementById("id_total_depense").value = document.getElementById("id_quantite_depense").value * document.getElementById("id_prix_ht_depense").value
+        console.log(document.getElementById("id_total_depense").value)
+    })
+    const prix_ht_depense = document.getElementById("id_prix_ht_depense")
+    prix_ht_depense.addEventListener("keyup", function(){
+        document.getElementById("id_total_depense").value = document.getElementById("id_prix_ht_depense").value
+        console.log(document.getElementById("id_total_depense").value)
+    })
+
+
+
+
+
+
+</script>
+{% endblock content %}
+

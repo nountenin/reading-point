@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static%}
+{% block content %}
+{% load crispy_forms_tags %}
+
+<div class="container">
+    <div class="row shadow p-3 mb-5 bg-white rounded">
+        <h4>Nouvelle depense</h4>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="item form-group">
+                <div class="col-md-3 col-sm-3 ">
+                    {{ depense_form.libelle_depense | as_crispy_field}}
+                </div>
+                <div class="col-md-4 col-sm-4 ">
+                    {{ depense_form.description_depense | as_crispy_field}}
+                </div>
+                <div class="col-md-2 col-sm-2 ">
+                    {{ depense_form.prix_ht_depense | as_crispy_field}}
+                </div>
+                <div class="col-md-1 col-sm-1 ">
+                    {{ depense_form.quantite_depense | as_crispy_field}}
+                </div>
+                <div class="col-md-2 col-sm-2 ">
+                    {{ depense_form.total_depense | as_crispy_field}}
+                </div>
+
+            </div>
+            <div class="col-md-1 col-sm-1 mt-4">
+                <button type="submit" class="btn btn-success ">Ajouter</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<table class="table table-striped table-bordered" style="width:100%">
+    <thead>
+    <tr>
+        <th>Libéllé</th>
+        <th>Description</th>
+        <th>Prix HT</th>
+        <th>Quantite</th>
+        <th>Total</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for d in depense %}
+    <tr>
+        <td>{{d.libelle_depense}}</td>
+        <td>{{d.description_depense}}</td>
+        <td>{{d.prix_ht_depense}}</td>
+        <td>{{d.quantite_depense}}</td>
+        <td>{{d.total_depense}}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    const quantite_depense = document.getElementById("id_quantite_depense")
+    document.getElementById("id_quantite_depense").value = 1
+    quantite_depense.addEventListener("keyup", function(){
+        document.getElementById("id_total_depense").value = document.getElementById("id_quantite_depense").value * document.getElementById("id_prix_ht_depense").value
+        console.log(document.getElementById("id_total_depense").value)
+    })
+    const prix_ht_depense = document.getElementById("id_prix_ht_depense")
+    prix_ht_depense.addEventListener("keyup", function(){
+        document.getElementById("id_total_depense").value = document.getElementById("id_prix_ht_depense").value
+        console.log(document.getElementById("id_total_depense").value)
+    })
+
+</script>
+{% endblock content %}

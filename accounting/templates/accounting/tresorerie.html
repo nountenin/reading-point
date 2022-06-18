@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% load static%}
+{% block content %}
+{% load crispy_forms_tags %}
+<!--<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div id="chartContainer" style="height: 370px; max-width: 1000px; margin: 0px auto;"></div>
+        </div>
+    </div>
+</div>-->
+
+<div class="container">
+    <h2 id="header">
+        <strong>Situation de la caise</strong>
+        <small class="text-muted">ANNEE 2022</small>
+    </h2>
+
+    <div class="row m-b-1">
+        <div class="col-lg-12">
+            <div class="card shadow">
+                <div class="container-fluid">
+                    <div class="row card-header">
+                        <div class="col-auto">
+                            <h4>Revenue <span class="bg-success">0</span>
+                            </h4>
+                        </div><div class="col-auto">
+                            <h4>Total Depense <span class="bg-success">{% if compte_mois == None %} 0 {% else %} {{compte_mois}} {% endif %}</span>
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-block">
+                    <div id="chartContainer" style="height: 370px; max-width: 920px; margin: 0px auto;"></div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- row -->
+
+    <!--<div class="row m-b-1">
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <h4 class="card-header">Product Wise Revenue</h4>
+                <div class="card-block">
+                    <div id="products-revenue-pie-chart"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <h4 class="card-header">Orders</h4>
+                <div class="card-block">
+                    <div id="orders-spline-chart"></div>
+                </div>
+            </div>
+        </div>
+    </div> &lt;!&ndash; row &ndash;&gt;-->
+</div> <!-- container -->
+
+
+<!-- Canvasjs -->
+<script src="{% static 'canvasjs/assets/jquery/jquery-3.1.0.min.js' %}"></script>
+<script src="{% static 'canvasjs/assets/tether/tether.min.js' %}"></script>
+<script src="{% static 'canvasjs/jquery1112.min.js' %}"></script>
+<!--<script>
+var chart = null;
+var dataPoints = [];
+
+window.onload = function() {
+
+chart = new CanvasJS.Chart("chartContainer", {
+	animationEnabled: true,
+	theme: "light2",
+	title: {
+		text: "Situation de la caisse"
+	},
+	axisY: {
+		title: "Montant",
+		titleFontSize: 24
+	},
+	data: [{
+		type: "column",
+		yValueFormatString: "#,### Units",
+		dataPoints: dataPoints
+	}]
+});
+$.getJSON("https://canvasjs.com/data/gallery/javascript/daily-sales.json?callback=?", callback);
+}
+
+function callback(data) {
+	for (var i = 0; i < data.dps.length; i++) {
+		dataPoints.push({
+			x: new Date(data.dps[i].date),
+			y: data.dps[i].units
+		});
+	}
+	chart.render();
+}
+
+</script>-->
+<script src="{% static 'canvasjs/jquery1111.min.js' %}"></script>
+<script src="{% static 'canvasjs/canvasjs.min.js' %}"></script>
+<script src="{% static 'canvasjs/jquery.canvasjs.min.js' %}"></script>
+<script>
+window.onload = function () {
+
+var chart = new CanvasJS.Chart("chartContainer", {
+	animationEnabled: true,
+	theme: "light2", // "light1", "light2", "dark1", "dark2"
+	title:{
+		text: "Situation de la caisse"
+	},
+	axisX: {
+	    interval: 1,
+		title: "Mois"
+	},
+	axisY: {
+		title: "Depense Mensuelle"
+	},
+	data: [{
+		type: "column",
+		showInLegend: true,
+		legendMarkerColor: "grey",
+		legendText: "MMbbl = one million barrels",
+		dataPoints: [
+			{ y: {% if mois.janv == None %} 0 {% else %} {{mois.janv}} {% endif %}, label: "Janvier" },
+			{ y: {% if mois.fev == None %} 0 {% else %} {{mois.fev}} {% endif %}, label: "Fevrier" },
+			{ y: {% if mois.mars == None %} 0 {% else %} {{mois.mars}} {% endif %}, label: "Mars" },
+			{ y: {% if mois.avril == None %} 0 {% else %} {{mois.avril}} {% endif %}, label: "Avril" },
+			{ y: {% if mois.mai == None %} 0 {% else %} {{mois.mai}} {% endif %}, label: "Mai" },
+			{ y: {% if mois.juin == None %} 0 {% else %} {{mois.juin}} {% endif %}, label: "Juin" },
+			{ y: {% if mois.juill == None %} 0 {% else %} {{mois.juill}} {% endif %}, label: "Juillet" },
+			{ y: {% if mois.aout == None %} 0 {% else %} {{mois.aout}} {% endif %}, label: "Aout" },
+			{ y: {% if mois.sept == None %} 0 {% else %} {{mois.sept}} {% endif %}, label: "Septembre" },
+			{ y: {% if mois.oct == None %} 0 {% else %} {{mois.oct}} {% endif %}, label: "Octobre" },
+			{ y: {% if mois.nov == None %} 0 {% else %} {{mois.nov}} {% endif %}, label: "Novembre" },
+			{ y: {% if mois.dec == None %} 0 {% else %} {{mois.dec}} {% endif %}, label: "Dcembre" },
+
+		]
+	}]
+});
+chart.render();
+
+}
+
+
+
+
+</script>
+
+<!-- Fin Canvas -->
+{% endblock content %}
+
