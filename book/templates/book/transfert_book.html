@@ -1,0 +1,254 @@
+{% extends 'base.html' %} {%load crispy_forms_tags%} {% load static%} {% block content %}
+{%if user.is_superuser%}
+
+<div class="x_panel">
+    <div class="x_title">
+        <div class="title_left">
+            <h1>{{context.tooltip.transfert}}</h1>
+        </div>
+        <ul class="nav navbar-right panel_toolbox">
+            <li> <a class="btn btn-sm btn-info-outline text-dark" href="{% url 'list_tranfert' %}">Liste des Transferts <i class="fa fa-list text-info"></i></a></li>
+            <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="#">Settings 1</a>
+                    <a class="dropdown-item" href="#">Settings 2</a>
+                </div>
+            </li>
+        </ul>
+        <div class="text-end">
+
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="x_content ">
+        <form class="row" method="post" action="" id="form">
+
+            {% csrf_token %} {% if messages %}
+                          <div class="col-md-12 alert-dismissible fade show mb-5" id="ms" role="alert" style="overflow: scroll; height: 100px;">
+
+            {% for m in messages %}
+           
+                {% if m.level == 25 %}
+                <i class="fa fa-info-circle text-info" style="font-size:30px"></i> {% elif m.level == 40 %}
+                <i class="fa fa-warning text-danger" style="font-size:30px"></i> {% else %}
+                <i class="fa fa-warning text-warning" style="font-size:30px"></i> {%endif %}
+                <span class="{% if m.level == 25 %} text text-success {% elif m.level == 40 %} text text-danger {% elif m.level == 30 %} text text-warning {%endif %}">
+                {{ m }}
+                {% if m.level == 30 %}
+                        <a href="{% url 'category' %}">Voulez-vous la créer?</a>
+                    {% endif %}
+                </span> <br>
+
+
+            {% endfor %}  </div> {% endif %}
+
+            <!--  DebutExpediteur -->
+            <div class="col-md-6">
+                <label for="pointlecture" class="form-label">Point de Lecture Expediteur</label>
+                <select name="pointlecture" id="pointlecture" class="form-control shadow">
+                    <option value="">Selectionnez un point de lecture</option>
+                    {% for livre in context.point %}
+                    <option value="{{ livre.pk }}"> {{ livre }}</option>
+                    {% endfor %}
+                </select>
+                <span class="text-danger" id="err" hidden></span>
+            </div>
+            <!-- Fin expediteur -->
+
+            <!-- Debut Destinataire -->
+            <div class="col-md-6">
+                <label for="pointlecture1" class="form-label">Point de Lecture Destinateur</label>
+                <select name="pointlecture1" id="pointlecture1" class="form-control shadow">
+                    <option value="">Selectionnez un point de lecture</option>
+                    {% for livre in context.point %}
+                    <option value="{{ livre.pk }}" class="op"> {{ livre }}</option>
+                    {% endfor %}
+                </select>
+                <span class="text-danger" id="err1" hidden></span>
+            </div>
+            <!-- Fin Destinataire -->
+           <div class="col-md-12">
+            <hr class="hr shadow -0">
+           </div>
+            <!-- Debut bloc livre + quantite -->
+            <div class="col-md-12" id="bloc">
+                <div id="0">
+                    <div class="col-md-6">
+                        <label for="book" class="form-label">Livre</label>
+                        <select name="book" id="book" class="form-control livre shadow" data-id="0">
+
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="quantite" class="form-label">Quantite</label>
+                        <input type="number" name="quantite0" value="0" id="quantite" class="form-control shadow">
+                    </div>
+                    <div class="col-md-12 ">
+                        <hr class="hr">
+                    </div>
+                </div>
+            </div>
+            <!-- Fin bloc -->
+            <div class="col-md-12 mt-4 text-right">
+                <hr class="hr shadow mt-0">
+                <button title="Ajouter un livre" class="btn  btn-primary shadow" id="plus"><i class="fa fa-plus text-white"
+                                                                           aria-hidden="true"></i>
+                </button>
+                <hr class="hr shadow -0">
+            </div>
+            <div class="col-md-12 mt-1 text-right">
+                <button type="submit" class="btn btn-primary">Valider</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+{%endif%}
+{% endblock content %} {% block js %}
+<script>
+    function displayError(selector, messages, parent) {
+        $(selector).html(messages)
+        $(selector).addClass('text-danger')
+        $(selector).removeAttr('hidden')
+        $(parent).addClass('is-invalid')
+    }
+    var i = 0;
+    var datas
+    var opt = "",
+        opt1 = ""
+    let pointlecture = $('#pointlecture')
+    let pointlecture1 = $('#pointlecture1')
+    let plus = $('#plus')
+    let livre = $('#book')
+    let suppr = $('.delete')
+    pointlecture.on('change', function() {
+        id = pointlecture.val()
+        if (id != '' && id != pointlecture1.val()) {
+            pointlecture.removeClass('is-invalid')
+            $.ajax({
+                url: "{% url 'getDataBook' %}",
+                type: "GET",
+                data: {
+                    id: id
+                },
+                success: function(data) {
+                    data = JSON.parse(data)
+                    datas = data
+                    opt = '<option value="" selected>Selectionnez un livre</option>'
+                    if (data != '') {
+                        $('#err').attr('hidden', 'hidden')
+                        for (const key in data) {
+                            if (Object.hasOwnProperty.call(data, key)) {
+                                const element = data[key];
+                                opt += `<option value="${element.id}">${element.isbn} ${element.titre}</option>`
+                            }
+                        }
+                        livre.html(opt)
+                        if (i > 0) {
+                            for (let j = 1; j <= i; j++) {
+                                $(`#book${j}`).html(opt)
+                            }
+                        }
+                    } else {
+                        opt = '<option value="" selected disabled>Aucun Livre Disponible</option>'
+                        livre.html(opt)
+                        if (i > 0) {
+                            for (let j = 1; j <= i; j++) {
+                                $(`#book${j}`).html(opt)
+                            }
+                        }
+                        $('#err').html('Aucun livre dans ce point de lecture')
+                        $('#err').removeAttr('hidden')
+                    }
+
+                },
+                error: function(e) {
+                    console.log(e)
+                }
+            });
+        } else if (pointlecture1.val() == '') {
+            displayError(
+                '#err',
+                'Veuillez selectionnez le point de lecture Expediteur!',
+                pointlecture
+            )
+            livre.html(null)
+           
+
+        } else {
+            displayError(
+                '#err',
+                'le point de lecture de destination ne doit pas etre egale a celui de l\'expediteur!',
+                pointlecture
+            )
+            livre.html(null)
+        }
+    })
+    plus.on('click', function() {
+        event.preventDefault()
+        i += 1
+        $('#bloc').append(
+            `
+            <div class="align-items-center" id='${i}'>
+                <div class="col-md-6">
+                    <label for="book${i}" class="form-label">Livre</label>
+                    <select name="book${i}" id="book${i}" class="form-control livre shadow" data-id="${i}">
+
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="quantite${i}" class="form-label">Quantite</label>
+                    <input type="number" name="quantite${i}" value="0" id="quantite${i}" class="form-control shadow">
+                </div>
+               
+                <div class="col-md-1 mt-4" title='Supprimer'>
+                    <div class="btn btn-danger delete shadow" id='${i}'><i class="fa fa-trash text-white" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <hr class="hr">
+                </div>
+            </div>
+            `
+        )
+        if (datas != '') {
+            $(`#book${i}`).html(opt)
+        } else {
+            console.log('null')
+        }
+    })
+    $('#bloc').on('click', '.delete', function() {
+        let id = $(this).attr('id')
+        $(`#${id}`).remove()
+        i -= 1
+    })
+   
+
+    pointlecture1.on('change', function() {
+        if (pointlecture1.val() != '') {
+            if (pointlecture1.val() != pointlecture.val()) {
+                pointlecture1.removeClass('is-invalid')
+                $('#err1').hide()
+            } else {
+                let messages = 'le point de lecture de destination ne doit pas etre egale a celui de l\'expediteur'
+                $('#err1').show()
+                displayError(
+                    '#err1',
+                    messages,
+                    pointlecture1
+                )
+            }
+
+        } else {
+            let messages = 'Veuillez selectionnez le point de lecture de destination!'
+            displayError('#err1', messages, pointlecture1)
+        }
+    })
+
+</script>
+{% endblock js %}

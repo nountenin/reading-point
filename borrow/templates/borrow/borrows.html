@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static%}
+<div class="col-md-12 col-sm-12 ">
+    <div class="x_panel">
+        <div class="row x_title">
+            <div class="col-9">
+                <h4 class="h2">{{ tooltip }}</h4>
+                  </div>
+
+                <div class="col-1">
+
+                </div>
+
+            </div>
+
+        {% if messages %}
+        {% for message in messages %}
+        <span class="x_panel  text-white h6 {% if message.level == 40 %}message alert alert-danger{% elif message.level == 25 %} message alert alert-success{% endif %}">
+                                {{message}}
+                          </span>
+        {% endfor %}
+        {% endif %}
+        <div class="table-responsive" id="tab_books_">
+             <ul class="nav navbar-left m-2 panel_toolbox">
+            <div class="t">
+                            <a class="btn btn-sm btn-info-outline " href="{%url 'pdfprintBorrow'%}"  target ="_blank"><i class="fa fa-print text-info mr-2"></i>Imprimer</a>
+                        </div>
+            <a href="{% url 'add-borrow'%}" class="btn btn-sm" title="Ajouter un Emprunt"  >
+                <i class="fa fa-plus text-success mr-2"></i>Ajouter un Emprunt</a>
+            </li>
+        </ul>
+            <table id="datatable-responsive" class="table table-striped w-100 jambo_table bulk_action">
+                <thead>
+                <tr class="headings">
+
+                    <th class="column-title">#</th>
+                    <th class="column-title">Date d'expiration d'emprunt</th>
+                    <th class="column-title">Date d'emprunt</th>
+                    <th class="column-title">Date de retour</th>
+                    <th class="column-title">Lecteur</th>
+                    <th class="column-title">Livre</th>
+                    <th class="column-title">Etat</th>
+                    <th class="column-title">Status</th>
+                    <th class="column-title no-link last"><span class="nobr">Action</span>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for borrow in borrows %}
+                <tr class="even pointer">
+                    <td class=" ">{{ forloop.counter }}</td>
+                    <td>{{borrow.date_borrow}}</td>
+                    <td>{{borrow.expired_date_borrow}}</td>
+                    <td>
+                        Non retourné
+                    </td>
+                    <td>{{borrow.reader.first_name}} {{borrow.reader.last_name}}</td>
+                    <td>{{borrow.book.title_book}}</td>
+                    {% if borrow.days > 0 %}
+                    <td class="text-success">Expire dans : {{borrow.days}} jours</td>
+                    <td class="text-success text-center"><i class="fa fa-check"></i></td>
+                    {% else %}
+                    <td class="text-danger">Expiré</td>
+                    <td class="text-danger text-center"><i class="fa fa-circle"></i></td>
+                    {% endif %}
+
+                    <td class=" d-flex align-items-center last text-center">
+                        <a title="Modification de l'emprunt" href="{% url 'edit_borrow' borrow.pk %}"><i
+                                class="fa fa-edit btn text-primary"></i></a>
+
+                        <a title="Restituer l'emprunt" href="{% url 'returns' borrow.pk%}"><i
+                                class="fa fa-reply"></i></a>
+
+                        <a title="Suprimer" class="supprimer" data-id="{{borrow.pk}}" href="#"><i
+                                class="fa fa-trash btn text-danger"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block js %}
+<script>
+$('#datatable-responsive').on('click','.supprimer',function(event){
+    event.preventDefault()
+    let id = $(this).data('id')
+   swal.fire({
+            "title": "Voulez-vous vraiment supprimer ce Point de Lecture ?",
+            "icon": "question",
+            "showCancelButton": true,
+            "cancelButtonText": "Non",
+            "confirmButtonText": "Oui",
+
+        }).then(function(result){
+            if(result.isConfirmed){
+                window.location.href = "delete_borrow/"+ id
+            }
+        })
+})
+{% if messages%}
+        {% for message in messages %}
+            {%if message.level == 20 %}
+                swal.fire({
+                "title":"{{message}}",
+                "icon": "info",
+                "confirmButtonText": "Ok"
+        })
+            {%endif%}
+        {%endfor%}
+      {%endif%}
+ setTimeout(() => {
+ $('.message').fadeOut(1000)
+}, 10000);
+
+
+
+
+</script>
+{% endblock js%}

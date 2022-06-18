@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{%load crispy_forms_tags%}
+{% load static%}
+{% block content %}
+<div class="x_panel">
+    <div class="row x_title">
+        <div class="col-md-8 col-sm-12 col-lg-10"><h1>{{tooltip }}</h1></div>
+        <div class="col-md-4 col-sm-12 col-lg-2">
+             <div class="col-md-12 col-sm-12 col-12 text-md-right">
+                 <a class="btn btn-sm btn-info-outline " href="{% url 'pdfprintBook'%}"  target ="_blank"><i class="fa fa-print text-info p-1"></i>Imprimer</a>
+             </div>
+
+        </div>
+    </div>
+    <div class="x_content ">
+        {%if perms.book.view_book%}
+        <div class="row">
+            <div class="col-md-12 col-sm-12" id="tab_books_">
+                <div class="table-responsive ">
+                    <table class="table text-center fs- table-striped jambo_table bulk_action" id="datatable-responsive"
+                           style="width:100%">
+                        <thead>
+                        <th class="column-title">#</th>
+                        <th class="column-title">ISBN</th>
+                        <th class="column-title">Titre</th>
+                        <th class="column-title">Auteur</th>
+                        <th class="column-title">Catégorie</th>
+                        <th class="column-title">Nombre d'exemplaire</th>
+                        <th class="column-title">Couverture</th>
+                          <th>Etat</th>
+                          {%if perms.book.delete_book or perms.book.change_book%}
+                        <th class="pe-5 column-title no-link last"><span class="nobr">Action</span>
+                            {%endif%}
+
+                        </thead>
+                        <tbody>
+                        {% for book in books %}
+                        <tr class="even pointer ">
+                             <td class=" ">{{ forloop.counter }}</td>
+                            <td class=" " style="font-family:consolas">{{book.isbn_book}}</td>
+                            <td class=" ">{{book.title_book}}</td>
+                            <td class=" ">{{book.author}}</td>
+                            <td class=" ">{{book.category.name_category}}</td>
+                            <td class=" ">{{book.number_copy_book}}</td>
+                            <td class=" "><img class="img-fluid rounded" width="30" src="{{book.img1_book.url}}">
+                            </td>
+                            <td>
+                                {%if book.number_copy_book < 1 %}
+                                    <span class="text-danger"><i class="fa fa-circle"></i></span>
+                                {%else%}
+                                    <span class="text-success"><i class="fa fa-check"></i></span>
+                                {%endif%}
+                            </td>
+                            {%if perms.book.delete_book or perms.books.change_book%}
+
+                            <td class=" last">
+                                    <a href="{% url 'detail_book' book.pk%}"><i class="fa fa-eye text-dark btn"
+                                                                            style="font-size:18PX"></i></a>
+                            </td>
+                        </tr>
+                        {%endif%}{% endfor%}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {%endif%}
+    </div>
+</div>
+{% endblock content %}
+{% block js %}
+<script>
+{% if messages %}
+        {% for msg in messages %}
+            {% if msg.level == 25  %}
+                swal.fire({
+                    "title": "{{ msg }}",
+                    "icon": "success"
+                })
+             {% endif%}
+        {% endfor %}
+    {% endif %}
+$('#datatable-responsive').on('click','.supprimer',function(event){
+    event.preventDefault()
+    let id = $(this).data('id')
+   swal.fire({
+            "title": "Voulez-vous vraiment supprimer ce livre ?",
+            "icon": "question",
+            "showCancelButton": true,
+            "cancelButtonText": "Non",
+            "confirmButtonText": "Oui",
+
+        }).then(function(result){
+            if(result.isConfirmed){
+                window.location.href = "delete_book/"+ id
+            }
+        })
+})
+setTimeout(() => {
+ $('.message').fadeOut(1000)
+}, 10000);
+
+id_print = $('#tablePrint')
+function imprimer(){
+
+var popcontenu = window.open('','_blank')
+popcontenu.document.open()
+popcontenu.document.write()
+popcontenu.document.close()
+
+}
+
+</script>
+{% endblock js%}

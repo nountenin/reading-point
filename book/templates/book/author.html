@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{%load crispy_forms_tags%}
+{% load static%}
+
+{% block content %}
+<div class="row x_title">
+ <div class=" col-md-7 col-12  h2">
+            <a href="{% url 'books'%}"><i class="fa fa-reply"></i> </a>| {{ tooltip }}
+        </div>
+</div>
+<div class="x_panel">
+    <div class="col-md-12 col-sm-12">
+        {% if messages %}
+        {% for message in messages %}
+        <span class="x_panel  text-white h6 {%if message.level == 25 %}message alert alert-success {%elif message.level == 40 %} message alert alert-danger {% endif %}">
+                                {{message}}
+                          </span>
+        {% endfor %}
+        {% endif %}
+    </div>
+    {%if perms.books.add_authors%}
+    <form action="" id="demo-form" method="post">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <label> <span style="font-family:Corbel; font-size:17px"> Prenom * : </span></label>
+                {{form.first_name_author | as_crispy_field}}
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <label> <span style="font-family:Corbel; font-size:17px"> Nom * : </span></label>
+                {{form.last_name_author |as_crispy_field}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <label> <span style="font-family:Corbel; font-size:17px"> Biographie: </span></label>
+                {{form.biography_author | as_crispy_field}}
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <label> <span style="font-family:Corbel; font-size:17px"> Nationalité : </span></label>
+                {{form.nationality_author |as_crispy_field}}
+            </div>
+        </div>
+        <div class="item form-group ">
+            <div class="col-md-12 col-sm-12 x_panel text-md-right">
+                <a class="btn btn-danger" href="{%url 'author'%}">Effacer</a>
+                <button class="btn btn-primary" type="submit">Enregistrer <i class="fa fa-save"></i></button>
+            </div>
+        </div>
+    </form>
+    {%endif%}
+</div>
+<div class="col-md-12 col-sm-12 p-0 ">
+    <div class="x_panel">
+        <div class="col-md-12 col-sm-12 col-12 text-md-right">
+                            <button class="btn btn-sm btn-info-outline " onclick="window.print()"><i class="fa fa-print text-info p-1"></i>Imprimer</button>
+                        </div>
+        <div class="x_content">
+            <div class="row">
+                <div class="col-sm-12">
+                    {%if perms.book.view_author%}
+                    <div class="card-box table-responsive" id="tab_books_">
+                         <table class="table text-center jambo_table    table-striped table-bordered"
+                               id="datatable-responsive" >
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Prenom</th>
+                                <th>Nom</th>
+                                <th>Biography</th>
+                                <th>Nationalité</th>
+                                {%if perms.book.change_author or perms.book.delete_author%}
+                                <th>action</th>
+                                {%endif%}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for author in authors%}
+                            <tr>
+                                 <td class=" ">{{ forloop.counter }}</td>
+                                <td>{{author.first_name_author}}</td>
+                                <td>{{author.last_name_author}}</td>
+                                <td>{{author.biography_author}}</td>
+                                <td>{{author.nationality_author}}</td>
+                                {%if perms.book.change_author or perms.book.delete_author%}
+                                <td class=" last">
+                                    {%if perms.books.change_authors%}
+                                    <a href="{% url 'edit_author' author.pk%}"><i
+                                            class="px-2 fa fa-pencil-square-o text-primary jambo_table"></i></a>
+                                    {%endif%}
+                                    {%if perms.books.delete_authors%}
+                                    <a class="supprimer" data-id="{{author.pk}}"
+                                       href="{% url 'delete_author' author.pk%}"><i
+                                            class="px-1 fa fa-trash text-danger"></i></a>
+
+                                    {%endif%}
+                                </td>
+                                {%endif%}
+                            </tr>
+                            {%endfor%}
+                            </tbody>
+                        </table>
+                    </div>
+                    {%endif%}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block js %}
+<script>
+{% if messages %}
+        {% for msg in messages %}
+            {% if msg.level == 20  %}
+                swal.fire({
+                    "title": "{{ msg }}",
+                    "icon": "info"
+                })
+             {% endif%}
+        {% endfor %}
+    {% endif %}
+$('#datatable-responsive').on('click','.supprimer',function(event){
+    event.preventDefault()
+    let id = $(this).data('id')
+
+   swal.fire({
+            "title": "Voulez-vous vraiment supprimer ce livre ?",
+            "icon": "question",
+            "showCancelButton": true,
+            "cancelButtonText": "Non",
+            "confirmButtonText": "Oui",
+
+        }).then(function(result){
+            if(result.isConfirmed){
+                window.location.href = "/books/delete_author/"+ id
+            }
+        })
+})
+setTimeout(() => {
+ $('.message').fadeOut(1000)
+}, 10000);
+
+
+
+
+</script>
+{% endblock js%}

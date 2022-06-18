@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{%load crispy_forms_tags%}
+{% load static%}
+
+{% block content %}
+
+<div class="x_panel">
+    <div class="d-flex justify-content-between container">
+<h2 class="h2"><a href="{% url 'books'%}"><i class="fa fa-reply"></i></a> | {{ tooltip }}</h2>
+     <div class=""><a href="{% url 'books'%}" class="btn btn-sm btn-primary">Terminée</a></div></div>
+
+
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            {% if messages %}
+            {% for message in messages %}
+            <span class="x_panel  text-white h6 {%if message.level == 25 %}message alert alert-success {%elif message.level == 40 %} message alert alert-danger {% endif %}">
+                                {{message}}
+                          </span>
+            {% endfor %}
+            {% endif %}
+        </div>
+        <form action="" enctype="multipart/form-data" id="demo-form" method="post">
+            {% csrf_token %}
+
+            <div class="col-md-12 row">
+                <div class="col-md-6 col-sm-12">
+                    <div class="col-md-12 col-sm-12">
+                        <label> <span> ISBN * : </span></label>
+                        {{form.isbn_book | as_crispy_field}}
+                    </div>
+                    <div class="col-md-12 col-sm-12">
+                        <label> <span style="font-family:Corbel; font-size:17px"> Titre * : </span> </label>
+                        {{form.title_book |as_crispy_field}}
+                    </div>
+                    <div class="col-md-12 col-sm-12">
+                        <label> <span
+                                style="font-family:Corbel; font-size:17px"> Nombre d'exemplaire * : </span></label>
+                        {{form.number_copy_book | as_crispy_field}}
+                    </div>
+                    <div class="col-md-12 col-sm-12">
+                        <label> <span
+                                style="font-family:Corbel; font-size:17px"> Date de publication * : </span></label>
+                        {{form.publication_date_book |as_crispy_field}}
+                    </div>
+                    <div class="col-md-12 mt-3 col-sm-12">
+                        <label> <span style="font-family:Corbel; font-size:17px"> Maison d'édition * : </span></label>
+                        {{form.edition_house |as_crispy_field}}
+                    </div>
+                    <div class="col-md-12 mt-1 col-sm-12">
+                        <label> <span style="font-family:Corbel; font-size:17px"> Version électronique : </span></label>
+                        {{form.file_book | as_crispy_field}}
+                    </div>
+
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <div class="col-md-12 col-sm-12">
+                        <label> <span style="font-family:Corbel; font-size:17px"> Auteurs * : </span></label>
+                        <div class="row">
+                            <div class="col-md-10 col-10">
+                                {{form.author |as_crispy_field}}
+                            </div>
+                            <a class=" col-md-2 col-sm-2 col-2 h2  mt-0 text-center " href="{% url 'author' %}"><i
+                                    class="fa fa-plus-square jambo_table" title="Ajouter un auteur">
+                            </i></a>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-sm-12">
+                        <label> <span style="font-family:Corbel; font-size:17px"> Catégorie * : </span></label>
+                        <div class="row">
+                            <div class="col-md-10 col-sm-10 col-10">
+                               <select id="category_id" name="category" class="form-control">
+                                   <option value="" >Séléctionner une catégorie</option>
+                                   {% for c in category %}
+                                   <option value="{{ c.pk }}" {%if c.pk == category_selected%}selected  {%endif%}>{{c.name_category}} {{c.pk }}</option>
+                                   {% endfor %}
+                               </select>
+                            </div>
+                            <a class="  col-md-2 col-2 h2 text-center mt-0 " href="{% url 'category' %}"><i
+                                    class="fa fa-plus-square jambo_table" title="Ajouter une catégorie">
+                            </i></a>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12 col-sm-12">
+                        <label> <span style="font-family:Corbel; font-size:17px"> Résumé * : </span></label>
+                        {{form.resume_book |as_crispy_field}}
+                    </div>
+                    <div class="col-md-12 col-sm-12">
+                        <label> <span
+                                style="font-family:Corbel; font-size:17px"> Image de préface * : </span></label>
+                        {{form.img1_book | as_crispy_field}}
+                    </div>
+                    <div class="col-md-12 col-sm-12">
+                        <label> <span
+                                style="font-family:Corbel; font-size:17px"> Image de poste face * : </span></label>
+                        {{form.img2_book | as_crispy_field}}
+                    </div>
+                </div>
+            </div>
+
+    <div class="item form-group x_panel">
+        <div class="col-md-12 col-sm-12 col-12 text-right">
+            <a class="btn btn-sm btn-danger" href="{% url 'books' %}">Annuler</a>
+            <button class="btn btn-sm btn-primary" type="submit">Enregistrer <i class="fa fa-save"></i></button>
+        </div>
+    </div>
+    </form>
+        </div>
+</div>
+{% endblock content %}
+{% block js %}
+<script>
+     $('textarea').attr("rows","5")
+      {% if messages%}
+        {% for message in messages %}
+            {%if message.level == 20 %}
+                swal.fire({
+                "title":"{{message}}",
+                "icon": "question",
+                "showCancelButton": true,
+                "cancelButtonText": "Non",
+                "confirmButtonText": "Oui"
+        }).then(function(result){
+            if(result.isConfirmed){
+                    location.href = `{% url 'approvisionnement'  id quantite %}`
+            }
+        })
+            {%endif%}
+        {%endfor%}
+      {%endif%}
+setTimeout(() => {
+ $('.message').fadeOut(1000)
+}, 10000);
+</script>
+{% endblock js %}

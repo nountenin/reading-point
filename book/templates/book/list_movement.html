@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{%load crispy_forms_tags%}
+{% load static%}
+{% block content %}
+
+<div class="x_panel">
+
+    <div class="x_title">
+        <h4>{{ tooltip }}</h4>
+        <div class="x_panel">
+            {%if messages%}
+            {% for message in messages%}
+                {% if message.level != 20 %}
+                    <div class="alert alert-danger"> {{message}}</div>
+                {% endif %}
+            {%endfor%}
+            {%endif%}
+            <form action="" id="demo-form" method="post">
+                {% csrf_token %}
+
+                <div class="row">
+                    <div class="col-md-3 col-12">
+                        <label> <span class="text-dark" style=" font-size:17px"> Filtrer par livre: </span></label>
+                        <select class="form-control" id="" name="title_book">
+                            <option value="">sélectionnez un livre</option>
+                            {%for li in title %}
+                            <option value="{{li.pk}}">{{li.title_book}}</option>
+                            {% endfor%}
+                        </select>
+                    </div>
+                    <div class="col-md-3 col-12">
+                        <label> <span class="text-dark" style=" font-size:17px"> Filtrer par type : </span></label>
+                        {{form.type| as_crispy_field}}
+
+                    </div>
+                    <div class="col-md-3 col-12">
+                        <label> <span class="text-dark" style=" font-size:17px"> Filtrer par date: </span></label>
+                        <select class="form-control" id="list_m" name="date_movement">
+                            <option value="">Sélectionnez une date</option>
+                            {%for move in dates%}
+                            <option value='{{move.date_movement|date:"Y-m-d"|lower}}'>{{move.date_movement}}</option>
+                            {%endfor%}
+                        </select>
+
+                    </div>
+                    <div class="col-md-3 col-12 mt-4 p-2">
+                        <button class="btn btn-primary " id="filte" type="submit">Filtrer  <i class="fa fa-filter"></i></button>
+
+                    </div>
+
+
+                </div>
+
+
+            </form>
+        </div>
+
+        <div class="clearfix"></div>
+    </div>
+    <div class="x_content ">
+        <div class="table-responsive m-0 pe-5">
+            <table class="table text-center fs- table-striped jambo_table bulk_action p-0 m-0"
+                   id="datatable-responsive"
+                   style="font-family:corbel; font-size:15px;vertical-align:center">
+                <thead>
+                <th class="column-title">#</th>
+                <th class="column-title">Isbn</th>
+                <th class="column-title">Titre</th>
+                <th class="column-title">Type</th>
+                <th class="column-title">Quantité</th>
+                <th class="column-title">Date Mouvement</th>
+                <th class="column-title">Motif</th>
+                <th class="pe-5 column-title no-link last"><span class="nobr">Action</span>
+                </th>
+                <th class="bulk-actions" colspan="7">
+                    <a class="antoo" style="color:#fff; font-weight:500;">Bulk Actions ( <span
+                            class="action-cnt"> </span> ) <i
+                            class="fa fa-chevron-down"></i></a>
+                </th>
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for movement in list_move %}
+                <tr class="even pointer ">
+                     <td class=" ">{{ forloop.counter }}</td>
+                    <td class=" ">{{movement.book.isbn_book}}</td>
+                    <td class=" ">{{movement.book.title_book}}</td>
+                    <td class=" ">{{movement.type}}</td>
+                    <td class=" ">{{movement.quantite}}</td>
+                    <td class=" ">{{movement.date_movement}}</td>
+                <td class=" ">{{movement.motif | truncatechars:9}}</td>
+                    </td>
+                    <td class=" last">
+                        <a href="{% url 'detail_movement' movement.pk%}">
+                            <i class="px-1 fa fa-eye text-dark"></i></a>
+                        {%if change%}
+                         <a href="{% url 'edit_movement' movement.pk%}">
+                            <i class="px-1 text-primary fa fa-edit mx-1 jambo_table"></i></a>
+                        {%endif%}
+                        {%if delete%}
+                           <a href="{% url 'delete_movement' movement.pk %}" class="supprimer" data-id="{{movement.pk}}">
+                            <i class="px-1 fa fa-trash  text-danger"></i></a>
+                        {%endif%}
+                    </td>
+                </tr>
+                {% endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block js %}
+<script>
+    {% if messages %}
+        {% for msg in messages %}
+            {% if msg.level == 20  %}
+                swal.fire({
+                    "title": "{{ msg }}",
+                    "icon": "success"
+                })
+             {% endif%}
+        {% endfor %}
+    {% endif %}
+$('#datatable-responsive').on('click','.supprimer',function(event){
+    event.preventDefault()
+    let id = $(this).data('id')
+   swal.fire({
+            "title": "Voulez-vous vraiment supprimer ce livre ?",
+            "icon": "question",
+            "showCancelButton": true,
+            "cancelButtonText": "Non",
+            "confirmButtonText": "Oui",
+
+        }).then(function(result){
+            if(result.isConfirmed){
+                window.location.href = "/books/delete_movement/"+ id
+            }
+        })
+})
+setTimeout(() => {
+ $('.message').fadeOut(1000)
+}, 2000);
+
+
+</script>
+<script>
+     $('textarea').attr("rows","8")
+
+
+
+
+</script>
+{% endblock js%}

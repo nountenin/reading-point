@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{%load crispy_forms_tags%}
+{% load static%}
+
+{% block content %}
+<div class="row x_title">
+<h2><a href="{% url 'books'%}"><i class="fa fa-reply"></i></a> | {{ tooltip }}</h2>
+    <div class="col-md-3 col-sm-12 col-lg-2">
+    </div>
+</div>
+<div class="x_panel">
+    <div class="col-md-12 col-sm-12">
+        {% if messages %}
+        {% for message in messages %}
+        <span class="x_panel  text-white h6 {%if message.level == 25 %}message alert alert-success {%elif message.level == 40 %}message alert alert-danger {% endif %}">
+                                {{message}}
+                          </span>
+        {% endfor %}
+        {% endif %}
+    </div>
+    {%if add %}
+    <form action="" id="demo-form" method="post">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <label> <span style="font-family:Corbel; font-size:17px"> Nom de la categorie * : </span></label>
+                {{form.name_category | as_crispy_field}}
+            </div>
+            <div class="col-md-6  col-sm-12 ">
+                <label  class="form-label">Rayon *</label>
+                <select class="form-control" name="rayon" id="id_rayon">
+                    <option value="">Sélectionnez un rayon</option>
+                    {%for ray in form_rayon%}
+                    <option value="{{ray.pk}}" {%if ray.pk == rayon_selected.pk %} selected{%endif%}>Point de lecture: {{ray.readpoint.name_readpoint}} Rayon: {{ray.name_rayon}}</option>
+                    {%endfor%}
+                </select>
+            </div>
+        </div>
+        <div class="item form-group  ">
+            <div class="col-md-12 col-sm-12 x_panel text-md-right">
+                <a class="btn btn-danger" href="{% url 'category' %}">Annuler </a>
+                <button class="btn btn-primary" type="submit">Enregistrer <i class="fa fa-save"></i></button>
+            </div>
+        </div>
+    </form>
+    {%endif%}
+</div>
+<div class="col-md-12 col-sm-12 p-0 row">
+
+    <div class="x_panel col-md-12 text-right">
+        <div class="row col-md-12 col-12 text-right">
+                 <button class="btn btn-sm btn-info-outline " onclick="window.print()"><i class="fa fa-print text-info p-1"></i>Imprimer</button>
+
+        </div>
+        <div class="x_content">
+
+            <div class="row">
+                <div class="col-sm-12 table-responsive" id="tab_books_">
+                    <table class="table text-center table-striped jambo_table table-bordered" id="datatable-responsive">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Non de la Catégorie</th>
+                            <th>Rayon</th>
+                            {%if perms.book.change_category or perms.book.delete_category%}
+                            <th>Actions</th>
+                            {%endif%}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for category in categories%}
+                        <tr>
+                             <td class=" ">{{ forloop.counter }}</td>
+                            <td>{{category.name_category}}</td>
+                            <td>{{category.rayon.name_rayon}}</td>
+                            {%if perms.book.change_category or perms.book.delete_category%}
+                            <td class="">
+                                {%if change%}
+                                <a class=" btn btn-sm" href="{% url 'edit_category' category.pk%}">
+                                    <i class="fa fa-pencil-square-o text-primary px-1" title="Modifier la catégorie"></i>
+                                </a>
+                                {%endif%}
+                                {%if delete%}
+                                <a class="supprimer" data-id="{{category.pk}}"  href="#"><i class=" fa fa-trash   text-danger"  style="font-size:18PX"></i></a> {%endif%}
+                            </td>
+                            {%endif%}
+                        </tr>
+                        {%endfor%}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block js %}
+<script>
+{% if messages %}
+        {% for msg in messages %}
+            {% if msg.level == 20  %}
+                swal.fire({
+                    "title": "{{ msg }}",
+                    "icon": "info"
+                })
+             {% endif%}
+        {% endfor %}
+    {% endif %}
+$('#datatable-responsive').on('click','.supprimer',function(event){
+    event.preventDefault()
+    let id = $(this).data('id')
+    console.log(id);
+ console.log(id)
+     swal.fire({
+            "title": "Voulez-vous vraiment supprimer ce livre ?",
+            "icon": "question",
+            "showCancelButton": true,
+            "cancelButtonText": "Non",
+            "confirmButtonText": "Oui",
+
+        }).then(function(result){
+            if(result.isConfirmed){
+                window.location.href = "/books/delete_category/"+ id
+            }
+        })
+})
+setTimeout(() => {
+ $('.message').fadeOut(1000)
+}, 10000);
+
+
+</script>
+{% endblock js%}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load static%}
+<div class="col-md-12 col-sm-12 ">
+    <div class="x_panel">
+        <div class="row x_title">
+            <div class="col-9">
+                <h4 class="h2">{{ tooltip }}</h4>
+                  </div>
+                <div class="col-1">
+                </div>
+            </div>
+        {% if messages %}
+        {% for message in messages %}
+        <span class="x_panel  text-white h6 {% if message.level == 40 %}message alert alert-danger{% elif message.level == 25 %} message alert alert-success{% endif %}">
+            {{message}}
+        </span>
+        {% endfor %}
+        {% endif %}
+        <div class="form">
+            <form action="" method="post">
+                {% csrf_token %}
+                {{form|crispy}}
+                <button type="submit" class="btn btn-primary">Valider</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

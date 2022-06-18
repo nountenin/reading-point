@@ -1,0 +1,258 @@
+{% extends 'base.html' %}
+{%load crispy_forms_tags%}
+{% load static%}
+{% block content %}
+<div class="x_panel">
+    <div class="row x_title">
+        <div class="col-md-9 col-sm-12 col-lg-10"><h1>{{tooltip }}</h1></div>
+        <div class="col-md-3 col-sm-12 col-lg-2">
+            <div class="row">
+                <a class="btn btn-secondary mt-3" href="{% url 'pdfprintBook'%}"><i class="fa fa-print"></i> Imprimer
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="x_content ">
+           <div class="row m-2 text-center">
+            {%if perms.book.add_book%}
+                <a class=" btn   col-md-2  col-sm-3   mx-3" href="{% url 'add_book' %}">
+                <i class="fa fa-plus text-success "> </i>
+                <span>Ajouter un livre</span>
+            </a>
+            {%endif%}
+               {%if perms.book.add_category or perms.book.view_category %}
+            <a class=" btn col-md-3  col-sm-3   mx-1" href="{% url 'category' %}">
+                <i class="fa fa-plus text-primary "> </i>
+                <span>Ajouter une catégorie </span>
+            </a>
+               {%endif%}
+               {%if perms.book.view_movement%}
+            <a class=" btn col-md-3  col-sm-3   mx-1" href="{% url 'movement' %}">
+                <i class="fa fa-plus text-success  "></i>
+                <span>Ajouter un mouvement </span>
+            </a>
+               {%endif%}
+            <a class=" btn col-md-3  col-sm-3   mx-1" href="{% url 'author' %}">
+                <i class="fa fa-user-plus text-success jambo_table"></i>
+                <span>Ajouter un auteur</span>
+            </a>
+        </div>
+        {%if perms.book.view_book%}
+        <div class="row">
+            <div class="col-md-12 col-sm-12" id="tab_books_">
+                <div class="table-responsive" id="tablePrint">
+                    <table class="table text-center fs- table-striped jambo_table bulk_action" id="datatable-responsive"
+                           style="width:100%">
+                        <thead>
+                        <th class="column-title">ISBN</th>
+                        <th class="column-title">Titre</th>
+                        <th class="column-title">Auteur</th>
+                        <th class="column-title">Catégorie</th>
+                        <th class="column-title">Nombre d'exemplaire</th>
+                        <th class="column-title">Couverture</th>
+                        <th class="pe-5 column-title no-link last"><span class="nobr">Action</span>
+                        </th>
+                        {%if perms.book.delete_book or perms.book.change_book%}
+
+                        <th class="bulk-actions" colspan="7">
+                            <a class="antoo" style="color:#fff; font-weight:500;">Bulk Actions ( <span
+                                    class="action-cnt"> </span> ) <i
+                                    class="fa fa-chevron-down"></i></a>
+                        </th>
+                        </tr>{%endif%}
+                        </thead>
+                        <tbody>
+                        {% for book in books %}
+                        <tr class="even pointer ">
+                            <td class=" " style="font-family:consolas">{{book.isbn_book}}</td>
+                            <td class=" ">{{book.title_book}}</td>
+                            <td class=" ">{{book.author}}</td>
+                            <td class=" ">{{book.category.name_category}}</td>
+                            <td class=" ">{{book.number_copy_book}}</td>
+                            <td class=" "><img class="img-fluid rounded" width="30" src="{{book.img1_book.url}}">
+                            </td>
+                            {%if perms.book.delete_book or perms.book.change_book%}
+
+                            <td class=" last">
+                                {%if voir%}
+                                    <a href="{% url 'detail_book' book.pk%}"><i class="fa fa-eye text-dark btn"
+                                                                            style="font-size:18PX"></i></a>
+
+                                {%endif%}
+                                {%if change%}
+                                <a href="{% url 'edit-book' book.pk%}"><i class="fa fa-edit btn text-primary jambo_table px-1"
+                                                                          style="font-size:18PX"></i></a>
+                                {%endif%}
+
+                                {%if delete %}
+                                <a class="supprimer" data-id="{{book.pk}}" href=""><i
+                                        class=" fa fa-trash  text-danger    " style="font-size:18PX"></i></a>
+                                {%endif%}
+
+                            </td>
+                        </tr>
+                        {%endif%}{% endfor%}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {%endif%}
+    </div>
+</div>
+{% endblock content %}
+
+<script>
+{% if messages %}
+        {% for msg in messages %}
+            {% if msg.level == 25  %}
+                swal.fire({
+                    "title": "{{ msg }}",
+                    "icon": "success"
+                })
+             {% endif%}
+        {% endfor %}
+    {% endif %}
+$('#datatable-responsive').on('click','.supprimer',function(event){
+    event.preventDefault()
+    let id = $(this).data('id')
+   swal.fire({
+            "title": "Voulez-vous vraiment supprimer ce livre ?",
+            "icon": "question",
+            "showCancelButton": true,
+            "cancelButtonText": "Non",
+            "confirmButtonText": "Oui",
+
+        }).then(function(result){
+            if(result.isConfirmed){
+                window.location.href = "delete_book/"+ id
+            }
+        })
+})
+setTimeout(() => {
+ $('.message').fadeOut(1000)
+}, 10000);
+
+
+id_print = $('#tablePrint')
+function imprimer(){
+
+var popcontenu = window.open('','_blank')
+popcontenu.document.open()
+popcontenu.document.write(
+    `<!DOCTYPE html>
+{% load static %}
+{%load crispy_forms_tags%}
+<html lang="fr">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <!-- Meta, title, CSS, favicons, etc. -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" href="images/favicon.ico" type="image/ico"/>
+        <link rel="stylesheet" href="{%static 'dist/sweetalert.css'%}"/>
+        <link rel="stylesheet" href="{%static 'css/style.css'%}"/>
+    
+        <!-- Datatables -->
+    
+        <link href="{%static 'vendors/datatables.net-bs/css/dataTables.bootstrap.min.css'%}" rel="stylesheet">
+        <link href="{%static 'vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css'%}" rel="stylesheet">
+        <link href="{%static 'vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css'%}" rel="stylesheet">
+        <link href="{%static 'vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css'%}" rel="stylesheet">
+        <link href="{%static 'vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css'%}" rel="stylesheet">
+    
+    
+    
+        <title>Impression du lecteur | </title>
+    
+        <!-- Bootstrap -->
+        <link href="{% static 'vendors/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+        <!-- Font Awesome -->
+        <link href="{% static 'vendors/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+        <!-- NProgress -->
+        <link href="{% static 'vendors/nprogress/nprogress.css' %}" rel="stylesheet">
+        <!-- iCheck -->
+        <link href="{% static 'vendors/iCheck/skins/flat/green.css' %}" rel="stylesheet">
+    
+        <!-- bootstrap-progressbar -->
+        <link href="{% static 'vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css' %}" rel="stylesheet">
+        <!-- JQVMap -->
+        <link href="{% static 'vendors/jqvmap/dist/jqvmap.min.css' %}" rel="stylesheet"/>
+        <!-- bootstrap-daterangepicker -->
+        <link href="{% static 'vendors/bootstrap-daterangepicker/daterangepicker.css' %}" rel="stylesheet">
+    
+        <!-- Custom Theme Style -->
+        <link href="{% static 'build/css/custom.min.css' %}" rel="stylesheet">
+    </head>
+<body>
+    
+<div class="imprimer">
+            ${id_print.html()}
+        </div>
+
+<!-- jQuery -->
+<script src="{% static 'vendors/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap -->
+<script src="{% static 'vendors/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+<!-- FastClick -->
+<script src="{% static 'vendors/fastclick/lib/fastclick.js' %}"></script>
+<!-- NProgress -->
+<script src="{% static 'vendors/nprogress/nprogress.js' %}"></script>
+<!-- Chart.js -->
+<script src="{% static 'vendors/Chart.js/dist/Chart.min.js' %}"></script>
+<!-- gauge.js -->
+<script src="{% static 'vendors/gauge.js/dist/gauge.min.js' %}"></script>
+<!-- bootstrap-progressbar -->
+<script src="{% static 'vendors/bootstrap-progressbar/bootstrap-progressbar.min.js' %}"></script>
+<!-- iCheck -->
+<script src="{% static 'vendors/iCheck/icheck.min.js' %}"></script>
+<!-- Skycons -->
+<script src="{% static 'vendors/skycons/skycons.js' %}"></script>
+<!-- Flot -->
+<script src="{% static 'vendors/Flot/jquery.flot.js' %}"></script>
+<script src="{% static 'vendors/Flot/jquery.flot.pie.js' %}"></script>
+<script src="{% static 'vendors/Flot/jquery.flot.time.js' %}"></script>
+<script src="{% static 'vendors/Flot/jquery.flot.stack.js' %}"></script>
+<script src="{% static 'vendors/Flot/jquery.flot.resize.js' %}"></script>
+<!-- Flot plugins -->
+<script src="{% static 'vendors/flot.orderbars/js/jquery.flot.orderBars.js' %}"></script>
+<script src="{% static 'vendors/flot-spline/js/jquery.flot.spline.min.js' %}"></script>
+<script src="{% static 'vendors/flot.curvedlines/curvedLines.js' %}"></script>
+<!-- DateJS -->
+<script src="{% static 'vendors/DateJS/build/date.js' %}"></script>
+<!-- JQVMap -->
+<script src="{% static 'vendors/jqvmap/dist/jquery.vmap.js' %}"></script>
+<script src="{% static 'vendors/jqvmap/dist/maps/jquery.vmap.world.js' %}"></script>
+<script src="{% static 'vendors/jqvmap/examples/js/jquery.vmap.sampledata.js' %}"></script>
+<!-- bootstrap-daterangepicker -->
+<script src="{% static 'vendors/moment/min/moment.min.js' %}"></script>
+<script src="{% static 'vendors/bootstrap-daterangepicker/daterangepicker.js' %}"></script>
+<script src="{% static 'vendors/datatables.net/js/jquery.dataTables.min.js ' %}"></script>
+<script src="{% static 'vendors/datatables.net-bs/js/dataTables.bootstrap.min.js ' %}"></script>
+<script src="{% static 'vendors/datatables.net-buttons/js/dataTables.buttons.min.js ' %}"></script>
+<script src="{% static 'vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js ' %}"></script>
+<script src="{% static 'vendors/datatables.net-buttons/js/buttons.flash.min.js ' %}"></script>
+<script src="{% static 'vendors/datatables.net-buttons/js/buttons.html5.min.js ' %}"></script>
+<script src="{% static 'vendors/datatables.net-buttons/js/buttons.print.min.js ' %}"></script>
+<script src="{% static 'vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js ' %}"></script>
+<script src="{% static 'vendors/datatables.net-keytable/js/dataTables.keyTable.min.js ' %}"></script>
+<script src="{% static 'vendors/datatables.net-responsive/js/dataTables.responsive.min.js ' %}"></script>
+<script src="{% static 'vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js ' %}"></script>
+<script src="{% static 'vendors/datatables.net-scroller/js/dataTables.scroller.min.js ' %}"></script>
+<script src="{% static 'vendors/jszip/dist/jszip.min.js"></script>
+<script src="{% static 'vendors/pdfmake/build/pdfmake.min.js"></script>
+<script src="{% static 'vendors/pdfmake/build/vfs_fonts.js"></script>
+<!-- Custom Theme Scripts -->
+<script src="{% static 'build/js/custom.min.js' %}"></script>
+<script src="{% static 'js/sweetalert2.all.min.js' %}"></script>
+
+</body>
+</html>
+    `
+)
+popcontenu.document.close()
+
+}
+
+</script>

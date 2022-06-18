@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12 col-sm-12 ">
+        <div class="x_panel" style="height: 80vh">
+            <div class="row x_title">
+                <h2 class="h2"><a href="{% url 'ranks'%}"><i class="fa fa-reply"></i></a> | Modification du Rayon</h2>
+            </div>
+            <div class="clearfix"></div>
+            <div class="x_content mt-5">
+                <br/>
+                <form class="form-horizontal form-label-left" data-parsley-validate id="demo-form4" method="POST">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="item form-group col-md-12 col-sm-12 col-12 row">
+                        <div class="col-md-6 col-sm-6 ">
+                            {{ read_p_rk.name_rayon | as_crispy_field }}
+                        </div>
+                        <div class="col-md-6  col-sm-6 ">
+                            <label  class="form-label">Point de lecture *</label>
+                             <select class="form-control" name="readpoint" id="readpoint_id">
+                                <option value="">Sélectionnez un point de lecture</option>
+
+                                {%for readpoin in readpoint%}
+
+                                <option value="{{readpoin.pk}}" {% if readpoin.pk == rp.pk %} selected {%endif%}>nom: {{readpoin.name_readpoint}} Commune: {{readpoin.commune_readpoint}}
+                                     Quartier: {{readpoin.quartier_readpoint}}
+                                </option>
+                                {%endfor%}
+                            </select>
+                        </div>
+                    </div>
+
+
+<!--                    <div class="ln_solid"></div>-->
+                    <div class="item form-group col-md-12 col-sm-12 offset-md-3 text-right ">
+                        <div class="text-right col-md-12">
+                            <a href="{% url 'ranks'%}" class="btn btn-sm btn-danger">Annuler</a>
+                            <button class="btn btn-sm btn-success btn-lg" type="submit">Modifier</button>
+                        </div>
+                    </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12 col-sm-12 ">
+        <div class="x_panel">
+            <div class="x_title">
+                 <h2 class="h2"><a href="{% url 'readpoints'%}"><i class="fa fa-reply"></i></a>  Modification d'un point de lecture</h2>
+                 <div class="col-md-12 col-sm-12">
+            {% if messages %}
+            {% for message in messages %}
+            <span class="x_panel  text-white h6 {%if message.level == 25 %}message alert alert-success {%elif message.level == 40 %} message alert alert-danger {% endif %}">
+                                {{message}}
+                          </span>
+            {% endfor %}
+            {% endif %}
+        </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <br/>
+                <form id="demo-form4" method="POST"  data-parsley-validate class="form-horizontal form-label-left">
+                        {% csrf_token %}
+
+                    <div class="item form-group">
+                        <input type="hidden" value="{{ rp.id }}" name="id_update" id="id" required="required" class="form-control ">
+                        <label class="col-form-label col-md-3 col-sm-3 label-align">Nom <span
+                                class="required">*</span>
+                        </label>
+                        <div class="col-md-6 col-sm-6 ">
+                            <input type="text" name="name_readpoint" value="{{ rp.name_readpoint }}" id="nomReadPoint" required="required" class="form-control ">
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <label class="col-form-label col-md-3 col-sm-3 label-align" for="last-name">Commune <span
+                                class="required">*</span>
+                        </label>
+                        <div class="col-md-6 col-sm-6 ">
+                            <input type="text" value="{{ rp.commune_readpoint }}" id="last-name" name="commune_readpoint" required="required" class="form-control">
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <label for="quartier_readpoint" class="col-form-label col-md-3 col-sm-3 label-align">Quartier</label>
+                        <div class="col-md-6 col-sm-6 ">
+                            <input id="quartier_readpoint" value="{{ rp.quartier_readpoint }}" class="form-control" type="text" name="quartier_readpoint">
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <label for="address_readpoint" class="col-form-label col-md-3 col-sm-3 label-align">Adresse</label>
+                        <div class="col-md-6 col-sm-6 ">
+                            <input id="address_readpoint" value="{{ rp.address_readpoint }}" class="form-control" type="text" name="address_readpoint">
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <label for="contact1_readpoint" class="col-form-label col-md-3 col-sm-3 label-align">Contact 1</label>
+                        <div class="col-md-6 col-sm-6 ">
+                            <input id="contact1_readpoint" value="{{ rp.contact1_readpoint }}" class="form-control" type="text" name="contact1_readpoint">
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <label for="contact2_readpoint" class="col-form-label col-md-3 col-sm-3 label-align">Contact 2</label>
+                        <div class="col-md-6 col-sm-6 ">
+                            <input id="contact2_readpoint" value="{{ rp.contact2_readpoint }}" class="form-control" type="text" name="contact2_readpoint">
+                        </div>
+                    </div>
+                    <div class="item form-group">
+                        <label for="email_readpoint" class="col-form-label col-md-3 col-sm-3 label-align">Email</label>
+                        <div class="col-md-6 col-sm-6 ">
+                            <input id="email_readpoint" value="{{ rp.email_readpoint }}" class="form-control" type="email" name="email_readpoint">
+                        </div>
+                    </div>
+
+                    <div class="ln_solid"></div>
+                    <div class="item form-group">
+                        <div class="col-md-6 col-sm-6 offset-md-3">
+                            <a href="{% url 'ranks' %}" class="btn btn-warning" type="button">Annuler</a>
+                            <button type="submit" class="btn btn-success">Enregistrer</button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

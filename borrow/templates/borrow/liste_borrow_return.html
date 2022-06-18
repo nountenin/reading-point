@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load mathfilters %}
+<div class="x_panel">
+    <div class="x_panel">
+        <div class="row x_title">
+            <div class="col-md-9 col-sm-12 col-lg-10"><h2 class="h2"><a href="{% url 'borrows'%}"><i class="fa fa-reply"></i></a> |
+                {{ tooltip }} Retourné</h2></div>
+        </div>
+       <div class="x_content">
+
+            <div class="table-responsive" id="tab_books_">
+                 <ul class="nav navbar-left m-2 panel_toolbox">
+            <div class="t">
+                            <a class="btn btn-sm btn-info-outline "  href="{%url 'pdfprintBorrowRetour'%}"  target ="_blank"style="" ><i class="fa fa-print text-info mr-2"></i>Imprimer</a>
+                        </div>
+            <a href="{% url 'add-borrow'%}" class="btn btn-sm" title="Ajouter un Emprunt"  >
+                <i class="fa fa-plus text-success mr-2"></i>Ajouter un Emprunt</a>
+            </li>
+        </ul>
+            <table id="datatable-responsive" class="table table-striped jambo_table bulk_action">
+                <thead>
+                <tr class="headings">
+                    <th class="column-title">#</th>
+                    <th class="column-title">Date d'emprunt</th>
+                    <th class="column-title">Date d'expiration d'emprunt</th>
+                    <th class="column-title">Date de retour</th>
+                    <th class="column-title">Lecteur</th>
+                    <th class="column-title">Livre</th>
+                </thead>
+                <tbody>
+                {% for borrow in borrows %}
+                <tr>
+                     <td class=" ">{{ forloop.counter }}</td>
+                    <td>{{borrow.date_borrow}}</td>
+                    <td>{{borrow.expired_date_borrow}}</td>
+                    <td>{{borrow.return_date_borrow}}</td>
+                    <td>{{borrow.reader}}</td>
+                    <td>{{borrow.book.title_book}}</td>
+                </tr>
+                {%endfor%}
+                </tbody>
+            </table>
+        </div>
+       </div>
+
+    </div>
+    </div>
+    {% endblock content %}

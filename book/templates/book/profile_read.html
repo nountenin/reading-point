@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{%load crispy_forms_tags%}
+{% load static%}
+
+{% block content %}
+<div class="">
+
+    <div class="title_right">
+        <div class="col-md-5 col-sm-5  form-group pull-right top_search">
+        </div>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 ">
+        <div class="x_panel">
+            <div class="row x_title">
+                <div class="col-md-9 col-sm-12 col-lg-10"><h1><a href="{% url 'books'%}"><i class="fa fa-reply"></i></a>
+                    | {{ tooltip }}</h1></div>
+                <div class="col-md-3 col-sm-12 col-lg-2">
+                    <div class="row">
+                        <button class="btn btn-secondary mt-3" onclick="window.print()"><i class="fa fa-print"></i>
+                            Imprimer
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row x_content container">
+                <div class="col-4 col-sm-6 ">
+                    <div class="product-image col-md-12">
+                        <img alt="..." class="img-fluid img-responsive rounded w-100" id="cover"
+                             src="{{book.img1_book.url}}" style="max-width:500px;max-height:300px"/>
+                    </div>
+                    <div class="row mt-3 col-md-12">
+                        <a class=" col-md-3" href="{{book.img1_book.url}}">
+                            <img alt="..." class=" couverture img-fluid"
+                                 src="{{book.img1_book.url}}" style="width:100px;height:70px"/>
+                        </a>
+                        <a class="col-md-3 couverture" href="{{book.img2_book.url}}">
+                            <img alt="..." class="couverture img-fluid"
+                                 src="{{book.img2_book.url}}" style="width:100px;height:70px"/>
+                        </a>
+                        {%if book.file_book %}
+                        <a target="_blank"
+                           class="col-md-5  d-flex align-items-center justify-content-between btn-lg btn btn-secondary "
+                           href="{% if book.file_book.url%} {{ book.file_book.url }} {%else%}  {%endif%}"
+                           style="width:100px;height:70px">
+                            Telecharger <i class="fa fa-download"></i>
+                        </a>
+                        {%else%}
+                        <a class="col-md-5 disabled  d-flex align-items-center justify-content-between btn-lg btn btn-secondary "
+                           href=""
+                           style="width:100px;height:70px">
+                            Telecharger <i class="fa fa-download"></i>
+                        </a>
+                        {%endif%}
+                    </div>
+                </div>
+
+                <div class="col-4 col-sm-6 ">
+                    <h3 class="" id="h3">
+                        <strong>Titre : </strong> {{book.title_book}}
+                    </h3>
+                    <table class="table" id="datatable-responsive">
+                        <tr>
+                            <th>Nombre d'exemplaire</th>
+                            <th>:</th>
+                            <td>{{book.number_copy_book}}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Date de publication</th>
+                            <th>:</th>
+                            <td>{{book.publication_date_book}}</td>
+                        </tr>
+
+                        <tr>
+                            <th>CATEGORIE</th>
+                            <th>:</th>
+                            <td>{{book.category.name_category}}</td>
+                        </tr>
+
+                        <tr>
+                            <th>RAYON</th>
+                            <th>:</th>
+                            <td>{{book.category.rayon.name_rayon}}</td>
+                        </tr>
+
+                        <tr>
+                            <th>POINT</th>
+                            <th>:</th>
+                            <td>{{book.category.rayon.readpoint.name_readpoint}}</td>
+                        </tr>
+
+                        <tr>
+                            <th>MAISON D'EDITION</th>
+                            <th>:</th>
+                            <td>{{book.edition_house}}</td>
+                        </tr>
+                    </table>
+                </div>
+
+
+            <div class="mt-2 x_panel">
+                    <h5 class="">Resumé:</h5>
+                    <p class="">{{book.resume_book}}</p>
+                </div>
+
+
+        </div>
+    </div>
+</div>
+</div>
+{% endblock content %}
+
+{% block js %}
+<script>
+  $('.couverture').on('click',function(e){
+   e.preventDefault()
+   $('#cover').attr('src',$(this).attr('src'))
+  }
+  )
+
+
+
+
+
+
+</script>
+{% endblock js%}

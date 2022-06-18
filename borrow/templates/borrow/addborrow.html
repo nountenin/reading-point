@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load crispy_forms_tags %}
+<div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 ">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h1> {{ tooltip }}</h1>
+                    <div class="clearfix"></div>
+
+                </div>
+                <div class="text-right"><a class="btn btn-primary btn-sm text-right" href="{% url 'borrows' %}"
+                                               title="Aller vers la pages des emprunt">Terminé</a></div>
+                <div class="x_content">
+                    {% if messages %}
+                    {% for message in messages %}
+                    <span class="x_panel  text-white h6 {% if message.level == 40 %}message alert alert-danger{% elif message.level == 25 %}message alert alert-success{% endif %}">
+                                {{message}}
+                          </span>
+                    {% endfor %}
+                    {% endif %}
+                    <form data-parsley-validate id="demo-form" method="post">
+                        {% csrf_token %}
+                        <div class="col-md-12">
+                            {{ form | crispy }}
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label" for="reader_id">Lecteurs*</label>
+
+                            <select class="form-control" required id="reader_id" name="reader">
+                                <option value="">Selectionner le lecteur</option>
+                                {% for r in reader %}
+                                <option value="{{r.pk}}" {% if r.pk == reader_selected %} selected {%endif%}>Nom:
+                                    {{r.first_name}} Prenom: {{r.last_name}} tel:{{r.phone1_reader}}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label" for="book_id">Livres*</label>
+                            <select class="form-control" required id="book_id" name="book">
+                                <option value="">Selectionner le livre</option>
+                                {% for l in book %}
+                                <option value="{{l.pk}}" {% if l.pk == book_selected %} selected {%endif%}>ISBN:
+                                    {{l.isbn_book}} Titre: {{l.title_book}} Point de
+                                    lecture:{{l.readpoint.name_readpoint}}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="ln_solid"></div>
+                            <div class="item form-group">
+                                <div class="col-md-12 col-sm-12 text-right">
+                                    <button class="btn btn-danger " title="Effacer" type="reset">
+                                        Effacer
+                                    </button>
+                                    <button class="btn btn-primary" title="Ajouter un emprunt" type="submit">
+                                        Ajouter
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block js %}
+<script>
+     $('textarea').attr("rows","5")
+      {% if messages%}
+        {% for message in messages %}
+            {%if message.level == 20 %}
+                swal.fire({
+                "title":"{{message}}",
+                "icon": "info",
+                "showCancelButton": true,
+                "cancelButtonText": "Non",
+                "confirmButtonText": "Oui"
+        }).then(function(result){
+            if(result.isConfirmed){
+                    location.href = '/books/movement'
+            }
+        })
+            {%endif%}
+        {%endfor%}
+      {%endif%}
+setTimeout(() => {
+ $('.message').fadeOut(1000)
+}, 10000);
+
+</script>
+{% endblock js %}

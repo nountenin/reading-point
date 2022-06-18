@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{%load crispy_forms_tags%}
+{% load static%}
+{% block content %}
+{%if user.is_superuser%}
+<div class="x_panel">
+    <div class="x_title">
+        <h1></h1>
+        <div class="title_left">
+            <h2> {{context.tooltip}}</h2>
+        </div>
+        <ul class="nav navbar-right panel_toolbox">
+             <div class="t">
+                <button class="btn btn-sm btn-info-outline " onclick="window.print()">
+                    <i class="fa fa-print text-info mr-2"></i>Imprimer</button>
+            </div>
+            <a class="btn btn-sm" href="{% url 'transfert' %}" title="Transferer des livres">
+                <i class="fa fa-plus text-success mr-2"></i>Transférer des livres
+            </a>
+            <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+            </li>
+
+        </ul>
+        <div class="text-end">
+
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="x_content">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card-box table-responsive" id="tab_books_">
+                    <table id="datatable-responsive" class="table table-striped jambo_table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Point de lecture Expéditeur</th>
+                            <th>Point de lecture Destinateur</th>
+                            <th>Date</th>
+                            <th>Heure</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for t in context.transferts %}
+                        <tr>
+                             <td class=" ">{{ forloop.counter }}</td>
+                            <td>{{ t.pointlectureEmetteur }}</td>
+                            <td>{{ t.pointlectureDestinateur }}</td>
+                            <td>{{ t.dateTransfert|date:"d F Y" }}</td>
+                            <td>{{ t.dateTransfert|time:"H:i " }}</td>
+                            <td>{{ t.desciption }}</td>
+                            <td><a class="btn btn-lg btn-transparent" title="Plus de Details"
+                                   href="{% url 'detailTransfert' t.pk %}"><i class="fa fa-eye"></i></a></td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{%endif%}
+{%endblock%}

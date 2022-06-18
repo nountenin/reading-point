@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row x_title">
+    <div class="col-md-9 col-sm-12 col-lg-10"> <h1><a href="{% url 'borrows'%}"><i class="fa fa-reply"></i></a> | {{ tooltip }}</h1> </div>
+    <div class="col-md-3 col-sm-12 col-lg-2">
+        <div class="row"> <button class="btn btn-secondary mt-3" onclick="window.print()"><i class="fa fa-print"></i> Imprimer </button></div>
+    </div>
+</div>
+{%if borrow.status == 1 %}
+{%if borrow.reader.image_reader%}
+<div class="d-flex justify-content-center"><img style="height:150px;width:150px"  class="rounded-circle img-fluid"  src="{{borrow.reader.image_reader.url}}"></div>
+{%endif%}
+<div class="d-flex justify-content-center ">
+
+
+    <form class="form-group col-12 "   >
+      <label for="lecteur">lecteur</label>
+      <input disabled class="form-control text-center rounded" type="text" id="lecteur" value=" {{borrow.reader}}">
+      <label for="livre">livre</label>
+      <input disabled class="form-control text-center rounded" type="text" id="livre" value=" {{borrow.book}}">
+      <label for="dateEmprunt">date d'emprunt</label>
+      <input disabled class="form-control text-center rounded" type="text" id="dateEmprunt" value="{{borrow.date_borrow}}">
+      <label for="dateExpiration"> date d'expiration</label>
+      <input disabled class="form-control text-center rounded" type="text" id="dateExpiration" value="{{borrow.expired_date_borrow}}">
+      <div class="d-flex justify-content-center">
+        <a href="{% url 'changeBorrowStatus' borrow.id %}" class="btn btn-dark mt-4 " ><i class="fa fa-reply"></i> Retourner d'emprunt</a>
+      </div>
+    </form>
+</div>
+{% endif %}
+{% endblock content %}

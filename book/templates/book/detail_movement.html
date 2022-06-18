@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{%load crispy_forms_tags%}
+{% load static%}
+
+{% block content %}
+<div class="">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 ">
+            <div class="x_panel">
+                <div class="row x_title">
+<h2 class="h2"><a href="{% url 'list_movement'%}"><i class="fa fa-reply"></i></a> | {{ tooltip }}</h2>
+
+                </div>
+                <div class="clearfix"></div>
+                <div class="x_content">
+                    <div class="col-md-4 col-sm-7 ">
+                        <div class="product-image">
+                            <img alt="..." id="cover" class="img-responsive rounded w-100"
+                                 src="{{move.book.img1_book.url}}"/>
+                        </div>
+                        <div class="row mt-2 mr-1">
+                            <a class=" col" href="{{move.book.img1_book.url}}">
+                                <img alt="..." class=" couverture img-fluid"
+                                     src="{{move.book.img1_book.url}}" style="width:100px;height:70px"/>
+                            </a>
+                            <a class="col couverture" href="{{move.book.img2_book.url}}">
+                                <img alt="..." class="couverture img-fluid"
+                                     src="{{move.book.img2_book.url}}" style="width:100px;height:70px"/>
+                            </a>
+                            {%if move.book.file_book %}
+                            <a target="_blank"
+                               class="col-md-5  d-flex align-items-center justify-content-between btn-lg btn btn-secondary "
+                               href="{% if move.book.file_book.url%} {{move.book.file_book.url}} {%else%}  {%endif%}"
+                               style="width:100px;height:70px">
+                                Telecharger <i class="fa fa-download"></i>
+                            </a>
+                            {%else%}
+                            <a class="col disabled  d-flex align-items-center justify-content-between btn-lg btn btn-secondary "
+                               href=""
+                               style="width:100px;height:70px">
+                                Telecharger <i class="fa fa-download"></i>
+                            </a>
+                            {%endif%}
+
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-5 col-sm-5 " style="border:0px solid #e5e5e5;">
+                        <h3 class="" id="h3">
+                            <strong>Titre : </strong> {{move.book.title_book}} <br>
+                            <strong class="text-primary">ISBN : </strong> {{move.book.isbn_book}}
+                        </h3>
+                        <table class="table">
+                            <tr>
+                                <th>TYPE DE MOUVEMENT</th>
+                                <th>:</th>
+                                <td>{{move.type}}</td>
+                            </tr>
+
+                            <tr>
+                                <th>MOTIF</th>
+                                <th>:</th>
+                                <td>{{move.motif}}</td>
+                            </tr>
+
+                            <tr>
+                                <th>QUANTITE</th>
+                                <th>:</th>
+                                <td>{{move.quantite}}</td>
+                            </tr>
+
+                            <tr>
+                                <th>DATE DU MOUVEMENT</th>
+                                <th>:</th>
+                                <td>{{move.date_movement}}</td>
+                            </tr>
+
+                        </table>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block js %}
+<script>
+  $('.couverture').on('click',function(e){
+   e.preventDefault()
+   $('#cover').attr('src',$(this).attr('src'))
+  }
+  )
+
+
+
+
+</script>
+{% endblock js%}

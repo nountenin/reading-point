@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{%load crispy_forms_tags%}
+{% load static%}
+{% block content %}
+<div class="x_panel">
+    <div class="row  x_title">
+        <div class=" col-md-7 col-12  h2">
+            <a href="{% url 'books'%}"><i class="fa fa-reply"></i> </a>| {{ tooltip }}
+        </div>
+
+        <div class="col-md-5 col-sm-5 col-12 text-md-right">
+            {%if voir %}<a class="btn btn-primary mt-3" href="{% url 'list_movement' %}"><i class="fa fa-list"></i>
+                Liste des mouvements </a>
+
+            {%endif%}
+        </div>
+    <div class="x_panel">
+        <div class="col-md-12 col-sm-12">
+            {% if messages %}
+            {% for message in messages %}
+            <span class="x_panel  text-white h6 {%if message.level == 25 %}message alert alert-success {%elif message.level == 40 %} alert alert-danger {% endif %}">
+                                {{message}}
+                          </span>
+            {% endfor %}
+            {% endif %}
+        </div>
+        <form action="" id="demo-form" method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-12 col-sm-12 p-0">
+                    <div class="col-md-12 col-sm-12 row">
+                        <div class="col-md-6 col-12">
+                            <label> <span class="text-dark" style=" font-size:17px"> Livre * : </span></label>
+                            <select class="form-control" id="book_id" name="book">
+                                <option value="" >Sélectionnez un Livre</option>
+                                {%for book in livre%}
+                                <option value="{{book.pk}}" {%if book.pk == book_selected.pk %}selected{%endif%}>
+                                    Isbn: {{book.isbn_book}} Titre: {{book.title_book}} Point de lecture : {{ book.category.rayon.readpoint.name_readpoint }}
+                                </option>
+                                {%endfor%}
+                            </select>
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <label> <span class="text-dark" style="font-size:17px"> Quantité * : </span></label>
+                            <input type="number" min="0" id="quantite" name="quantite" class="form-control">
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item form-group mt-5">
+                    <div class="col-md-12 col-sm-12 x_panel text-md-right">
+                        <button class="btn btn-danger" type="reset">Effacer
+                        </button>
+                        <button class="btn btn-primary" type="submit">Enregistrer <i class="fa fa-save"></i></button>
+                    </div>
+                </div>
+        </form>
+    </div>
+    <div class="clearfix"></div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block js %}
+
+{%endblock%}
