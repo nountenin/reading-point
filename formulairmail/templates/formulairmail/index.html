@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+    <div class="col-md-12 col-sm-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h5>Point de Lecture - MAIL</h5>
+            </div>
+            <div class="row">
+                <!--                <div class="col-3">-->
+                <!--                    <div class="card shadow shadow-lg">-->
+                <!--                        <div class="card-head p-2 bg-danger text-white">-->
+                <!--                            <h6 style="font-family: courier new">Envoyer un mail</h6>-->
+                <!--                        </div>-->
+                <!--                        <div class="card-body">-->
+                <!--                            <div class="row mb-4">-->
+                <!--                                <div class="col-2"><i class="fa fa-plus text-secondary fa-lg"></i></div>-->
+                <!--                                <div class="col">-->
+                <!--                                    <a href="">Nouveau message</a>-->
+                <!--                                </div>-->
+                <!--                            </div>-->
+                <!--                            <div class="row mb-4">-->
+                <!--                                <div class="col-2"><i class="fa fa-users text-secondary fa-lg"></i></div>-->
+                <!--                                <div class="col">-->
+                <!--                                    <a href="">Boite de reception</a>-->
+                <!--                                </div>-->
+                <!--                            </div>-->
+
+                <!--                            <div class="row mb-4">-->
+                <!--                                <div class="col-2"><i class="fa fa-reply text-secondary fa-lg"></i></div>-->
+                <!--                                <div class="col">-->
+                <!--                                    <a href="">Boite d'envoie</a>-->
+                <!--                                </div>-->
+                <!--                            </div>-->
+
+                <!--                        </div>-->
+                <!--                    </div>-->
+                <!--                </div>-->
+                <div class="col-md-6 col-sm-12 text-center">
+                    <table class="table table-hover" id="datatable-responsive">
+                        <thead>
+                        <th>email</th>
+                        </thead>
+                        <tbody>
+                        {% for m in listmail %}
+                        <tr>
+                            <td class="d-flex"><a class="w-100 email" data-id="{{m}}" href="#">{{ m }}</a></td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+
+                    </table>
+                </div>
+                <div class="content mt-0 col-md-5 offset-md-1 col-sm-12 x_content">
+                    <form action="" class="" enctype="multipart/form-data" method="post">
+                        {% csrf_token %}
+                        <div class="col-md-12 col-sm-12">
+                            {% if messages %}
+                            {% for message in messages %}
+                            <span class="x_panel  text-white h6 {%if message.level == 25 %}message alert alert-success {%elif message.level == 40 %}message alert alert-danger {% endif %}">
+                                {{message}}
+                          </span>
+                            {% endfor %}
+                            {% endif %}
+                        </div>                        <!--                    <span class="section"></span>-->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="field  form-group">
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12">
+                                            <label class="col-form-label label-align">Email du Destinataire<span
+                                                    class="required text-danger">* <a class="link tout_le_mode" href=""
+                                                                                      style="font-size:10px">Clicker ici pour envoyer a tout le lecteur</a></span></label>
+                                        </div>
+                                        <div class="col-md-12 col-sm-12">
+                                            {{ form.email_exp|as_crispy_field }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="field  form-group">
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12">
+                                            <label class="col-form-label label-align">Objet<span
+                                                    class="required text-danger">*</span></label>
+                                        </div>
+                                        <div class="col-md-12 col-sm-12">
+                                            {{ form.object|as_crispy_field }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="field  form-group">
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12">
+                                            <label class="col-form-label label-align">Message à envoyer<span
+                                                    class="required text-danger">*</span></label>
+                                        </div>
+                                        <div class="col-md-12 col-sm-12">
+                                            {{ form.message|as_crispy_field }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 d-flex justify-content-end">
+                            <button class="btn  btn-danger" type="reset">Annuler</button>
+                            <button class="btn  btn-success" type="submit">Envoyer</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <hr>
+            <table class="table text-wrap table-hover">
+                <thead>
+                <th>#</th>
+                <th>Adresse mail</th>
+                <th>Message</th>
+                </thead>
+                <tbody>
+                {% for m in email %}
+                <tr>
+                     <td>{{ forloop.counter }}</td>
+                    <td>{{ m.email_exp |truncatechars:50}}</td>
+                    <td>{{ m.message }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+
+            </table>
+{% endblock content %}
+
+
+{% block js %}
+<script>
+  emails =[]
+ {%for mail in listmail%}
+  emails.push("{{mail}}")
+  {%endfor%}
+ $('.tout_le_mode').on('click',function(event){
+    event.preventDefault()
+    $("#id_email_exp").val(emails)
+ })
+
+$('#datatable-responsive').on('click','.email',function(event){
+    event.preventDefault()
+    let email = $(this).data('id')
+    $("#id_email_exp").val(email)
+})
+setTimeout(() => {
+ $('.message').fadeOut(1000)
+}, 10000);
+
+
+
+</script>
+{% endblock js%}
