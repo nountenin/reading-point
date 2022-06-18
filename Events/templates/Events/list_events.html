@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+<h1>{{ context.titre}}</h1>
+<div class="col-md-12 col-sm-12  ">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2> Listes des Evennements </h2>
+            <ul class="nav navbar-right panel_toolbox">
+                <div class="">
+                    <a class="btn btn-sm btn-info-outline" href="{% url 'event' %}">
+                    <i class="fa fa-plus-circle text-info"></i> Ajouter un Evenement
+                    </a>
+               </div>
+                 <a class="btn btn-sm btn-info-outline " href="{% url 'pdfprintEvents'%}" target="_blank"><i class="fa fa-print text-info p-1"></i>Imprimer</a>
+                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="x_content">
+            <div class="row">
+                <table id="datatable" class="table table-striped table-bordered jambo_table bulk_action"
+                       style="width:100%">
+                    <thead>
+                    <tr class="headings">
+                        <th class="column-title">#</th>
+                        <th class="column-title">Titre</th>
+                        <th class="column-title">Type</th>
+                        <th class="column-title">Descriptions</th>
+                        <th class="column-title">Image</th>
+                        <th class="column-title no-link text-center last"><span class="nobr">Action</span>
+                        </th>
+
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for li in context.listes %}
+                    <tr class="even pointer">
+
+                         <td class=" ">{{ forloop.counter }}</td>
+                        <td class=" ">{{li.title_events }}</td>
+                        <td class=" ">{{li.type}}</td>
+                        <td class=" "> {{li.descriptions | truncatechars:20 }} </td>
+                        <td>
+                        {% if li.image_events %}
+                            <img src="{{ li.image_events.url }}" alt="" height="50" width="50">
+                        {% endif %}
+                        </td>
+                        <td class=" last text-center">
+                            <a href="{% url 'detail' li.pk %}" id="view"><i class="fa fa-eye btn text-dark"></i></a>
+                            <a href="{% url 'edit' li.pk %}" class="editer" data-bs-toggle="modal" data-bs-target="#edit">
+                                <i class="fa fa-edit btn text-primary"></i></a>
+
+                            <a href="" class="delete" data-id="{{li.pk}}" ><i class="fa fa-trash btn text-danger"></i></a>
+
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+
+    {% if messages %}
+        {% for msg in messages %}
+            {% if msg.level == 25  %}
+                swal.fire({
+                    "title": "{{ msg }}",
+                    "icon": "success"
+                })
+             {% endif%}
+        {% endfor %}
+    {% endif %}
+$('#datatable').on('click','.delete',function(event){
+    event.preventDefault()
+    let id = $(this).data('id')
+   swal.fire({
+            "title": "Voulez-vous vraiment supprimer cet evennement ?",
+            "icon": "question",
+            "showCancelButton": true,
+            "cancelButtonText": "Non",
+            "confirmButtonText": "Oui",
+
+        }).then(function(result){
+            if(result.isConfirmed){
+                window.location.href = "delete/"+ id
+            }
+        })
+})
+setTimeout(() => {
+ $('.message').fadeOut(1000)
+}, 10000);
+</script>
+{% endblock script %}

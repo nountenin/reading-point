@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 ">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2 class="h2">{{ context.titre}}</h2>
+
+                <ul class="nav navbar-right panel_toolbox">
+                    <li>
+                         <div class="">
+                                <a class="btn btn-sm btn-info-outline" href="{% url 'list_events' %}">
+                                    <i class="fa fa-list text-info mr-2"></i>Liste des Evenements
+                                </a>
+                           </div>
+                    </li>
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a class="dropdown-item" href="#">Settings 1</a>
+                            </li>
+                            <li><a class="dropdown-item" href="#">Settings 2</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content" style="display: block;">
+                <br>
+                <form method="post" id="demo-form2" class="form-horizontal form-label-left" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group row ">
+                        {% if messages %}
+                        {%for m in messages%}
+                        <div class="col-md-12">
+                            <span class="text-success">{{ m }} </span>
+                        </div>
+                        {%endfor%}
+                        {% endif %}
+                        <div class="col-md-6 col-sm-6 ">
+                            {{ context.form.title_events | as_crispy_field }}
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            {{ context.form.type | as_crispy_field }}
+                        </div>
+                        <div class="col-md-6 col-sm-6 ">
+                            {{ context.form.image_events | as_crispy_field }}
+                        </div>
+                        <div class="col-md-12 col-sm-12 ">
+                            {{ context.form.descriptions | as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <div class="ln_solid"></div>
+                    <div class="item form-group">
+                        <div class="col-md-12 col-sm-12 text-right">
+                            <button type="submit" class="btn btn-sm btn-primary">Enregistrer</button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock %}
+<!--table-->

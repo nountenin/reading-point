@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+<h1><a href="{% url 'event' %}"><span class="fa fa-reply text-primary me-5"></span></a> |{{ context.titre}} </h1>
+
+<div class=" container row  border shadow " >
+    <div class="col-md-4">
+        <img src="{{ context.event.image_events.url }}" height="300" width="300" alt="">
+    </div>
+    <div class="col-md-8" >
+        <h1 class="heading">{{context.event.title_events}}</h1>
+        <span class="bg-info text-white">{{context.event.type}}</span>
+        <blockquote class="message"><h5>Descriptions:</h5>{{ context.event.descriptions }}
+        </blockquote>
+        <br>
+    </div>
+</div>
+
+
+{% endblock %}
